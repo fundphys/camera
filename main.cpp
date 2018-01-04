@@ -1,10 +1,10 @@
 #include "test_camera.hpp"
 #include <iostream>
+#include <memory>
 
-int main() {
-  auto camera = std::make_shared<TestCamera>(TestCamera(0.0, Roi(640, 480, 0, 0), 0.0, 0.0));
-  auto frame = camera->getFrame();
 
+
+double average_frame( const Frame & frame) {
   double av = 0.0;
   for (int i = 0; i < frame.height(); ++i) {
     for (int j = 0; j < frame.width(); ++j) {
@@ -12,7 +12,16 @@ int main() {
     }
   }
 
-  std::cout << av/(frame.width()*frame.height()) << std::endl;
+  return av/(frame.width()*frame.height());
+} 
 
+
+int main() {
+  std::shared_ptr<Camera> camera = std::make_shared<TestCamera>(TestCamera(10, Roi(640, 480, 0, 0), 0.0, 0.0));
+  auto frame = camera->getFrame();
+  std::cout <<  average_frame(frame) << std::endl;
+  camera->setExposure(20);
+  frame = camera->getFrame();
+  std::cout <<  average_frame(frame) << std::endl;
   return 0;
 }
